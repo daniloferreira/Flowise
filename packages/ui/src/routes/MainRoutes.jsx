@@ -3,6 +3,7 @@ import { lazy } from 'react'
 // project imports
 import MainLayout from '@/layout/MainLayout'
 import Loadable from '@/ui-component/loading/Loadable'
+import { AuthProvider, PrivateRoute } from './auth'
 
 // chatflows routing
 const Chatflows = Loadable(lazy(() => import('@/views/chatflows')))
@@ -47,11 +48,11 @@ const MainRoutes = {
     children: [
         {
             path: '/',
-            element: <Chatflows />
+            element: <Chatflows allowedRoles={["chatflow"]}/>
         },
         {
             path: '/chatflows',
-            element: <Chatflows />
+            element: <Chatflows allowedRoles={["chatflow"]}/>
         },
         {
             path: '/agentflows',

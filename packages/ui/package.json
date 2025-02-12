@@ -34,9 +34,11 @@
         "framer-motion": "^4.1.13",
         "history": "^5.0.0",
         "html-react-parser": "^3.0.4",
+        "jwt-decode": "^4.0.0",
         "lodash": "^4.17.21",
         "moment": "^2.29.3",
         "notistack": "^2.0.4",
+        "oidc-client-ts": "^3.1.0",
         "prop-types": "^15.7.2",
         "react": "^18.2.0",
         "react-code-blocks": "^0.0.9-0",
@@ -62,7 +64,7 @@
     "scripts": {
         "dev": "vite",
         "start": "vite",
-        "build": "vite build",
+        "build": "vite build --debug",
         "clean": "rimraf build",
         "nuke": "rimraf build node_modules .turbo"
     },

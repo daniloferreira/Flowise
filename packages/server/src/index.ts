@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { RequestHandler } from 'express'
 import { Request, Response } from 'express'
 import path from 'path'
 import cors from 'cors'
@@ -28,6 +28,7 @@ import { QueueManager } from './queue/QueueManager'
 import { RedisEventSubscriber } from './queue/RedisEventSubscriber'
 import { WHITELIST_URLS } from './utils/constants'
 import 'global-agent/bootstrap'
+import { authenticate } from './middlewares/oidc'
 
 declare global {
     namespace Express {
@@ -156,66 +157,50 @@ export class App {
         const URL_CASE_INSENSITIVE_REGEX: RegExp = /\/api\/v1\//i
         const URL_CASE_SENSITIVE_REGEX: RegExp = /\/api\/v1\//
 
-        if (process.env.FLOWISE_USERNAME && process.env.FLOWISE_PASSWORD) {
-            const username = process.env.FLOWISE_USERNAME
-            const password = process.env.FLOWISE_PASSWORD
-            const basicAuthMiddleware = basicAuth({
-                users: { [username]: password }
-            })
-            this.app.use(async (req, res, next) => {
-                // Step 1: Check if the req path contains /api/v1 regardless of case
-                if (URL_CASE_INSENSITIVE_REGEX.test(req.path)) {
-                    // Step 2: Check if the req path is case sensitive
-                    if (URL_CASE_SENSITIVE_REGEX.test(req.path)) {
-                        // Step 3: Check if the req path is in the whitelist
-                        const isWhitelisted = whitelistURLs.some((url) => req.path.startsWith(url))
-                        if (isWhitelisted) {
-                            next()
-                        } else if (req.headers['x-request-from'] === 'internal') {
-                            basicAuthMiddleware(req, res, next)
-                        } else {
-                            const isKeyValidated = await validateAPIKey(req)
-                            if (!isKeyValidated) {
-                                return res.status(401).json({ error: 'Unauthorized Access' })
-                            }
-                            next()
-                        }
-                    } else {
-                        return res.status(401).json({ error: 'Unauthorized Access' })
-                    }
-                } else {
-                    // If the req path does not contain /api/v1, then allow the request to pass through, example: /assets, /canvas
-                    next()
-                }
-            })
-        } else {
-            this.app.use(async (req, res, next) => {
-                // Step 1: Check if the req path contains /api/v1 regardless of case
-                if (URL_CASE_INSENSITIVE_REGEX.test(req.path)) {
-                    // Step 2: Check if the req path is case sensitive
-                    if (URL_CASE_SENSITIVE_REGEX.test(req.path)) {
-                        // Step 3: Check if the req path is in the whitelist
-                        const isWhitelisted = whitelistURLs.some((url) => req.path.startsWith(url))
-                        if (isWhitelisted) {
-                            next()
-                        } else if (req.headers['x-request-from'] === 'internal') {
-                            next()
-                        } else {
-                            const isKeyValidated = await validateAPIKey(req)
-                            if (!isKeyValidated) {
-                                return res.status(401).json({ error: 'Unauthorized Access' })
-                            }
-                            next()
-                        }
-                    } else {
-                        return res.status(401).json({ error: 'Unauthorized Access' })
-                    }
-                } else {
-                    // If the req path does not contain /api/v1, then allow the request to pass through, example: /assets, /canvas
-                    next()
-                }
-            })
+        type  AuthMethod = 'USER_PASSWORD' | 'OIDC' | 'API-KEY';
+        const authMethods: Record<AuthMethod, RequestHandler> = {
+            'USER_PASSWORD': (req, res, next) => {
+                const username = process.env.FLOWISE_USERNAME!
+                const password = process.env.FLOWISE_PASSWORD!
+                const basicAuthMiddleware = basicAuth({
+                    users: { [username]: password }
+                })
+                basicAuthMiddleware(req, res, next)
+            },
+            'OIDC': authenticate,
+            'API-KEY':  (req, res, next) => {
+                next()
+            }
         }
+         this.app.use(async (req, res, next) => {
+                // Step 1: Check if the req path contains /api/v1 regardless of case
+                if (URL_CASE_INSENSITIVE_REGEX.test(req.path)) {
+                    // Step 2: Check if the req path is case sensitive
+                    if (URL_CASE_SENSITIVE_REGEX.test(req.path)) {
+                        // Step 3: Check if the req path is in the whitelist
+                        const isWhitelisted = whitelistURLs.some((url) => req.path.startsWith(url))
+                        if (isWhitelisted) {
+                            next()
+                        } else if (req.headers['x-request-from'] === 'internal') {
+                            const method: AuthMethod = (process.env.FLOWISE_AUTH_METHOD ?? 'API-KEY') as AuthMethod;
+                            authMethods[method](req, res, next)
+                        } else {
+                            const isKeyValidated = await validateAPIKey(req)
+                            if (!isKeyValidated) {
+                                return res.status(401).json({ error: 'Unauthorized Access' })
+                            }
+                            next()
+                        }
+                    } else {
+                        return res.status(401).json({ error: 'Unauthorized Access' })
+                    }
+                } else {
+                    // If the req path does not contain /api/v1, then allow the request to pass through, example: /assets, /canvas
+                    next()
+                }
+            })
+        
+
 
         if (process.env.ENABLE_METRICS === 'true') {
             switch (process.env.METRICS_PROVIDER) {

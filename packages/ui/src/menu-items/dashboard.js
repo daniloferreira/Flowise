@@ -27,7 +27,8 @@ const dashboard = {
             type: 'item',
             url: '/chatflows',
             icon: icons.IconHierarchy,
-            breadcrumbs: true
+            breadcrumbs: true,
+            role: 'chatflowd'
         },
         {
             id: 'agentflows',
@@ -36,7 +37,8 @@ const dashboard = {
             url: '/agentflows',
             icon: icons.IconUsersGroup,
             breadcrumbs: true,
-            isBeta: true
+            isBeta: true,
+            role: 'agentflow'
         },
         {
             id: 'assistants',
@@ -44,7 +46,8 @@ const dashboard = {
             type: 'item',
             url: '/assistants',
             icon: icons.IconRobot,
-            breadcrumbs: true
+            breadcrumbs: true,
+            role: 'assistant'
         },
         {
             id: 'marketplaces',
@@ -60,7 +63,8 @@ const dashboard = {
             type: 'item',
             url: '/tools',
             icon: icons.IconTool,
-            breadcrumbs: true
+            breadcrumbs: true,
+            role: 'tool'
         },
         {
             id: 'credentials',
@@ -68,7 +72,8 @@ const dashboard = {
             type: 'item',
             url: '/credentials',
             icon: icons.IconLock,
-            breadcrumbs: true
+            breadcrumbs: true,
+            role: 'credentials'
         },
         {
             id: 'variables',
@@ -76,7 +81,8 @@ const dashboard = {
             type: 'item',
             url: '/variables',
             icon: icons.IconVariable,
-            breadcrumbs: true
+            breadcrumbs: true,
+            role: 'variables'
         },
         {
             id: 'apikey',
@@ -84,7 +90,8 @@ const dashboard = {
             type: 'item',
             url: '/apikey',
             icon: icons.IconKey,
-            breadcrumbs: true
+            breadcrumbs: true,
+            role: 'apikey'
         },
         {
             id: 'document-stores',
@@ -92,7 +99,8 @@ const dashboard = {
             type: 'item',
             url: '/document-stores',
             icon: icons.IconFiles,
-            breadcrumbs: true
+            breadcrumbs: true,
+            role: 'document-stores'
         }
     ]
 }

@@ -419,7 +419,7 @@ const ProfileSection = ({ username, handleLogout }) => {
                                                     </ListItemIcon>
                                                     <ListItemText primary={<Typography variant='body2'>About Flowise</Typography>} />
                                                 </ListItemButton>
-                                                {localStorage.getItem('username') && localStorage.getItem('password') && (
+                                                {username && (
                                                     <ListItemButton
                                                         sx={{ borderRadius: `${customization.borderRadius}px` }}
                                                         onClick={handleLogout}

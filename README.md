@@ -108,7 +108,7 @@ Flowise has 3 different modules in a single mono repository.
     pnpm build
     ```
 
-    <details>
+    <details>   
     <summary>Exit code 134 (JavaScript heap out of memory)</summary>  
       If you get this error when running the above `build` script, try increasing the Node.js heap size and run the script again:
 

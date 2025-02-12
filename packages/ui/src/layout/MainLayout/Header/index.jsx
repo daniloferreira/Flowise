@@ -17,6 +17,7 @@ import { IconMenu2 } from '@tabler/icons-react'
 
 // store
 import { SET_DARKMODE } from '@/store/actions'
+import { useAuth } from '@/routes/auth'
 
 // ==============================|| MAIN NAVBAR / HEADER ||============================== //
 
@@ -75,6 +76,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
     const [isDark, setIsDark] = useState(customization.isDarkMode)
     const dispatch = useDispatch()
+    const auth = useAuth();
 
     const changeDarkMode = () => {
         dispatch({ type: SET_DARKMODE, isDarkMode: !isDark })
@@ -83,10 +85,15 @@ const Header = ({ handleLeftDrawerToggle }) => {
     }
 
     const signOutClicked = () => {
-        localStorage.removeItem('username')
-        localStorage.removeItem('password')
-        navigate('/', { replace: true })
-        navigate(0)
+        if(auth?.user) {
+            auth?.logout();
+        } else {
+            localStorage.removeItem('username')
+            localStorage.removeItem('password')
+            navigate('/', { replace: true })
+            navigate(0)
+        }
+        
     }
 
     return (
@@ -128,7 +135,7 @@ const Header = ({ handleLeftDrawerToggle }) => {
             <Box sx={{ flexGrow: 1 }} />
             <MaterialUISwitch checked={isDark} onChange={changeDarkMode} />
             <Box sx={{ ml: 2 }}></Box>
-            <ProfileSection handleLogout={signOutClicked} username={localStorage.getItem('username') ?? ''} />
+            <ProfileSection handleLogout={signOutClicked} username={auth?.user?.profile.preferred_username ?? localStorage.getItem('username') ?? ''} />
         </>
     )
 }

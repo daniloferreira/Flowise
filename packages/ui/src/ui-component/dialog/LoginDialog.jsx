@@ -5,8 +5,10 @@ import PropTypes from 'prop-types'
 import { Dialog, DialogActions, DialogContent, Typography, DialogTitle } from '@mui/material'
 import { StyledButton } from '@/ui-component/button/StyledButton'
 import { Input } from '@/ui-component/input/Input'
+import { useAuth } from '@/routes/auth'
 
 const LoginDialog = ({ show, dialogProps, onConfirm }) => {
+    const {enabled, login} = useAuth()
     const portalElement = document.getElementById('portal')
     const usernameInput = {
         label: 'Username',
@@ -22,6 +24,10 @@ const LoginDialog = ({ show, dialogProps, onConfirm }) => {
     const [usernameVal, setUsernameVal] = useState('')
     const [passwordVal, setPasswordVal] = useState('')
 
+    if(enabled && show) {
+        login();
+        return <Loader/>
+    }
     const component = show ? (
         <Dialog
             onKeyUp={(e) => {

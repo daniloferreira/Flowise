@@ -7,14 +7,18 @@ import { Divider, List, Typography } from '@mui/material'
 // project imports
 import NavItem from '../NavItem'
 import NavCollapse from '../NavCollapse'
+import { useAuth } from '@/routes/auth'
 
 // ==============================|| SIDEBAR MENU LIST GROUP ||============================== //
 
 const NavGroup = ({ item }) => {
+    const { roles} = useAuth();
     const theme = useTheme()
 
     // menu list collapse & items
-    const items = item.children?.map((menu) => {
+    const items = item.children?.filter(item => {
+        return !item.role || roles?.find(role => item.role === role)
+    }).map((menu) => {
         switch (menu.type) {
             case 'collapse':
                 return <NavCollapse key={menu.id} menu={menu} level={1} />
