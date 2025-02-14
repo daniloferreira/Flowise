@@ -85,6 +85,7 @@ import FollowUpPromptsCard from '@/ui-component/cards/FollowUpPromptsCard'
 
 // History
 import { ChatInputHistory } from './ChatInputHistory'
+import { userManager } from '@/routes/auth'
 
 const messageImageStyle = {
     width: '128px',
@@ -856,6 +857,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
     const fetchResponseFromEventStream = async (chatflowid, params) => {
         const chatId = params.chatId
         const input = params.question
+        const user = await userManager.getUser();
         const username = localStorage.getItem('username')
         const password = localStorage.getItem('password')
         params.streaming = true
@@ -865,7 +867,7 @@ export const ChatMessage = ({ open, chatflowid, isAgentCanvas, isDialog, preview
             body: JSON.stringify(params),
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: username && password ? `Basic ${btoa(`${username}:${password}`)}` : undefined,
+                Authorization: `Bearer ${user?.access_token}`,
                 'x-request-from': 'internal'
             },
             async onopen(response) {

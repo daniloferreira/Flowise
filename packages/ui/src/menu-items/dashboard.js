@@ -28,7 +28,7 @@ const dashboard = {
             url: '/chatflows',
             icon: icons.IconHierarchy,
             breadcrumbs: true,
-            role: 'chatflowd'
+            // role: 'chatflowd'
         },
         {
             id: 'agentflows',
@@ -38,7 +38,7 @@ const dashboard = {
             icon: icons.IconUsersGroup,
             breadcrumbs: true,
             isBeta: true,
-            role: 'agentflow'
+            // role: 'agentflow'
         },
         {
             id: 'assistants',
@@ -47,7 +47,7 @@ const dashboard = {
             url: '/assistants',
             icon: icons.IconRobot,
             breadcrumbs: true,
-            role: 'assistant'
+            // role: 'assistant'
         },
         {
             id: 'marketplaces',
@@ -64,7 +64,7 @@ const dashboard = {
             url: '/tools',
             icon: icons.IconTool,
             breadcrumbs: true,
-            role: 'tool'
+            // role: 'tool'
         },
         {
             id: 'credentials',
@@ -73,7 +73,7 @@ const dashboard = {
             url: '/credentials',
             icon: icons.IconLock,
             breadcrumbs: true,
-            role: 'credentials'
+            // role: 'credentials'
         },
         {
             id: 'variables',
@@ -82,7 +82,7 @@ const dashboard = {
             url: '/variables',
             icon: icons.IconVariable,
             breadcrumbs: true,
-            role: 'variables'
+            // role: 'variables'
         },
         {
             id: 'apikey',
@@ -91,7 +91,7 @@ const dashboard = {
             url: '/apikey',
             icon: icons.IconKey,
             breadcrumbs: true,
-            role: 'apikey'
+            // role: 'apikey'
         },
         {
             id: 'document-stores',
@@ -100,7 +100,7 @@ const dashboard = {
             url: '/document-stores',
             icon: icons.IconFiles,
             breadcrumbs: true,
-            role: 'document-stores'
+            // role: 'document-stores'
         }
     ]
 }

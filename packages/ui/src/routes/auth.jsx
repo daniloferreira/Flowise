@@ -7,11 +7,11 @@ import { useNavigate } from 'react-router-dom'
 const oidcConfig = {
     authority: 'http://localhost:8282/realms/mycompany',
     client_id: 'flowise-admin',
-    redirect_uri: 'http://localhost:8080/callback',
-    post_logout_redirect_uri: 'http://localhost:8080/',
+    redirect_uri: `${window.location.origin}/callback`,
+    post_logout_redirect_uri: `${window.location.origin}/`,
     scope: 'openid profile email offline_access',
     automaticSilentRenew: true,
-    silent_redirect_uri: 'http://localhost:3000/silent-refresh'
+    silent_redirect_uri: `${window.location.origin}/silent-refresh`
 }
 
 export const userManager = new UserManager(oidcConfig)

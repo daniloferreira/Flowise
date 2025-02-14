@@ -13,6 +13,7 @@ import credentialsApi from '@/api/credentials'
 
 // const
 import { baseURL } from '@/store/constant'
+import { userManager } from '@/routes/auth'
 
 const StyledPopper = styled(Popper)({
     boxShadow: '0px 8px 10px -5px rgb(0 0 0 / 20%), 0px 16px 24px 2px rgb(0 0 0 / 14%), 0px 6px 30px 5px rgb(0 0 0 / 12%)',
@@ -26,8 +27,9 @@ const StyledPopper = styled(Popper)({
     }
 })
 
-const fetchList = async ({ name, nodeData }) => {
+const fetchList = async ({ name, nodeData}) => {
     const loadMethod = nodeData.inputParams.find((param) => param.name === name)?.loadMethod
+    const user = await userManager.getUser();
     const username = localStorage.getItem('username')
     const password = localStorage.getItem('password')
 
@@ -36,8 +38,8 @@ const fetchList = async ({ name, nodeData }) => {
             `${baseURL}/api/v1/node-load-method/${nodeData.name}`,
             { ...nodeData, loadMethod },
             {
-                auth: username && password ? { username, password } : undefined,
-                headers: { 'Content-type': 'application/json', 'x-request-from': 'internal' }
+                
+                headers: { 'Content-type': 'application/json', 'x-request-from': 'internal', 'Authorization': `Bearer ${user?.access_token}`}
             }
         )
         .then(async function (response) {
@@ -61,8 +63,10 @@ export const AsyncDropdown = ({
     freeSolo = false,
     disableClearable = false
 }) => {
+    
     const customization = useSelector((state) => state.customization)
 
+    const [user, setUser] = useState()
     const [open, setOpen] = useState(false)
     const [options, setOptions] = useState([])
     const [loading, setLoading] = useState(false)
@@ -97,6 +101,11 @@ export const AsyncDropdown = ({
     }
 
     useEffect(() => {
+        userManager.getUser().then(user => {
+            setUser(user)
+        })
+    }, [])
+    useEffect(() => {
         setLoading(true)
         ;(async () => {
             const fetchData = async () => {
@@ -109,7 +118,7 @@ export const AsyncDropdown = ({
         })()
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [user])
 
     return (
         <>
