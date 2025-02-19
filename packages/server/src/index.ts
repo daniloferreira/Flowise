@@ -2,7 +2,7 @@ import express, { RequestHandler } from 'express'
 import { Request, Response } from 'express'
 import path from 'path'
 import cors from 'cors'
-import http from 'http'
+import https, { ServerOptions } from 'https'
 import basicAuth from 'express-basic-auth'
 import { DataSource } from 'typeorm'
 import { MODE } from './Interface'
@@ -29,6 +29,7 @@ import { RedisEventSubscriber } from './queue/RedisEventSubscriber'
 import { WHITELIST_URLS } from './utils/constants'
 import 'global-agent/bootstrap'
 import { authenticate } from './middlewares/oidc'
+import { readFileSync } from 'fs'
 
 declare global {
     namespace Express {
@@ -280,7 +281,14 @@ export async function start(): Promise<void> {
 
     const host = process.env.HOST
     const port = parseInt(process.env.PORT || '', 10) || 3000
-    const server = http.createServer(serverApp.app)
+    
+
+    const options: ServerOptions = {
+        key: readFileSync(process.env.HTTPS_PRIVATE_KEY! ?? '/usr/src/private_nopass.key'),
+        cert: readFileSync(process.env.HTTPS_CERTIFICATE! ?? '/usr/src/certificate.crt')
+    }
+
+    const server = https.createServer(options, serverApp.app)
 
     await serverApp.initDatabase()
     await serverApp.config()
